@@ -35,7 +35,7 @@ server:
   so-reuseport: yes
   edns-buffer-size: 1232
   delay-close: 10000
-  cache-min-ttl: 3600
+  cache-min-ttl: 900
   cache-max-ttl: 86400
   do-daemonize: no
   username: "_unbound"
@@ -61,14 +61,20 @@ server:
   outgoing-range: 8192
   msg-cache-size: @MSG_CACHE_SIZE@
   rrset-cache-size: @RR_CACHE_SIZE@
-  neg-cache-size: 4M
+  neg-cache-size: 16M
   serve-expired: yes
-  serve-expired-ttl: 86400
-  serve-expired-ttl-reset: yes
+  serve-expired-ttl: 21600
   access-control: 0.0.0.0/0 allow
   access-control: ::0/0 allow
   tls-cert-bundle: "/etc/ssl/certs/ca-certificates.crt"
   aggressive-nsec: yes
+  cache-max-negative-ttl: 1800
+  extended-statistics: yes
+  incoming-num-tcp: 20
+  outgoing-num-tcp: 20
+  infra-cache-numhosts: 50000
+  key-cache-size: 64m
+  unwanted-reply-threshold: 100000
 
   local-zone: "1." static
   local-zone: "10.in-addr.arpa." static
