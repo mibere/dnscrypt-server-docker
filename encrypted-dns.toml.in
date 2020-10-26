@@ -65,12 +65,12 @@ tcp_max_active_connections = 100
 
 ## Built-in DNS cache capacity
 
-cache_capacity = 150000
+cache_capacity = 100000
 
 
 ## DNS cache: minimum TTL
 
-cache_ttl_min = 3600
+cache_ttl_min = 900
 
 
 ## DNS cache: max TTL
@@ -80,7 +80,7 @@ cache_ttl_max = 86400
 
 ## DNS cache: error TTL
 
-cache_ttl_error = 600
+cache_ttl_error = 60
 
 
 ## DNS cache: to avoid bursts of traffic for popular queries when an
