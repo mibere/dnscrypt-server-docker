@@ -1,5 +1,5 @@
 FROM ubuntu:20.04
-LABEL maintainer="Frank Denis"
+LABEL maintainer="mibere"
 SHELL ["/bin/sh", "-x", "-c"]
 ENV SERIAL 1
 
