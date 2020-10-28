@@ -1,5 +1,6 @@
 FROM ubuntu:20.04
-LABEL maintainer="mibere"
+LABEL maintainer="dnscrypt.one / mibere"
+LABEL origin="Frank Denis"
 SHELL ["/bin/sh", "-x", "-c"]
 ENV SERIAL 1
 
