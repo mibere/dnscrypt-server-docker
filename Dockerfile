@@ -7,7 +7,7 @@ ENV SERIAL 1
 ENV UNBOUND_GIT_URL https://github.com/NLnetLabs/unbound.git
 ENV UNBOUND_GIT_REVISION release-1.12.0
 
-ENV RUNTIME_DEPS bash util-linux coreutils findutils grep libssl1.1 ldnsutils libevent-2.1 expat ca-certificates runit runit-helper nano redis-server curl dialog whiptail readline-common
+ENV RUNTIME_DEPS bash util-linux coreutils findutils grep libssl1.1 ldnsutils libevent-2.1 expat ca-certificates runit runit-helper nano redis-server cron curl dialog whiptail readline-common
 ENV BUILD_DEPS   curl make build-essential git libevent-dev libexpat1-dev autoconf file libssl-dev byacc libhiredis-dev
 ENV CFLAGS=-Ofast
 ENV RUSTFLAGS "-C link-arg=-s"
