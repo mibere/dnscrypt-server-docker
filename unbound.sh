@@ -138,6 +138,7 @@ cachedb:
   backend: "redis"
   redis-server-host: 127.0.0.1
   redis-server-port: 6379
+  redis-expire-records: yes
   secret-seed: "Unbound"
 
 remote-control:
