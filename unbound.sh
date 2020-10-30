@@ -12,7 +12,6 @@ fi
 availableMemory=$((availableMemory - reserved))
 msg_cache_size=$((availableMemory / 4))
 rr_cache_size=$((availableMemory / 3))
-
 nproc=$(nproc)
 if [ "$nproc" -gt 1 ]; then
     threads=$((nproc - 1))
@@ -76,9 +75,7 @@ server:
   infra-cache-numhosts: 50000
   key-cache-size: 64m
   unwanted-reply-threshold: 100000
-  module-config: "validator cachedb iterator"
-  root-hints: "var/root.hints"
-  
+
   local-zone: "1." static
   local-zone: "10.in-addr.arpa." static
   local-zone: "127.in-addr.arpa." static
@@ -134,12 +131,6 @@ server:
 
   include: "@ZONES_DIR@/*.conf"
 
-cachedb:
-  backend: "redis"
-  redis-server-host: 127.0.0.1
-  redis-server-port: 6379
-  secret-seed: "Unbound"
-
 remote-control:
   control-enable: yes
   control-interface: 127.0.0.1
@@ -158,17 +149,12 @@ mkdir -p /opt/unbound/etc/unbound/dev &&
 
 mkdir -p -m 700 /opt/unbound/etc/unbound/var &&
     chown _unbound:_unbound /opt/unbound/etc/unbound/var &&
-    curl -sSf --connect-timeout 10 --max-time 60 https://www.internic.net/domain/named.root -o /opt/unbound/etc/unbound/var/root.hints &&
-    /opt/unbound/sbin/unbound-anchor -r /opt/unbound/etc/unbound/var/root.hints -a /opt/unbound/etc/unbound/var/root.key
+    /opt/unbound/sbin/unbound-anchor -a /opt/unbound/etc/unbound/var/root.key
 
 if [ ! -f /opt/unbound/etc/unbound/unbound_control.pem ]; then
     /opt/unbound/sbin/unbound-control-setup 2> /dev/null || :
 fi
 
 mkdir -p /opt/unbound/etc/unbound/zones
-
-mkdir -p /var/lib/redis &&
-    chown -R redis:redis /var/lib/redis &&
-    service redis-server start
 
 exec /opt/unbound/sbin/unbound
