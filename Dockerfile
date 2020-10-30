@@ -6,7 +6,7 @@ ENV SERIAL 1
 
 ENV CFLAGS=-Ofast
 ENV BUILD_DEPS   curl make build-essential git libevent-dev libexpat1-dev autoconf file libssl-dev byacc
-ENV RUNTIME_DEPS bash util-linux coreutils findutils grep libssl1.1 ldnsutils libevent-2.1 expat ca-certificates runit runit-helper jed
+ENV RUNTIME_DEPS bash util-linux coreutils findutils grep libssl1.1 ldnsutils libevent-2.1 expat ca-certificates runit runit-helper nano redis-server cron curl dialog whiptail readline-common
 
 RUN apt-get update; apt-get -qy dist-upgrade; apt-get -qy clean && \
     apt-get install -qy --no-install-recommends $RUNTIME_DEPS && \
@@ -26,7 +26,7 @@ RUN apt-get update; apt-get install -qy --no-install-recommends $BUILD_DEPS && \
     groupadd _unbound && \
     useradd -g _unbound -s /etc -d /dev/null _unbound && \
     ./configure --prefix=/opt/unbound --with-pthreads \
-    --with-username=_unbound --with-libevent && \
+    --with-username=_unbound --with-libevent --with-libhiredis --enable-cachedb && \
     make -j"$(getconf _NPROCESSORS_ONLN)" install && \
     mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/unbound.conf.example && \
     apt-get -qy purge $BUILD_DEPS && apt-get -qy autoremove && \
@@ -73,7 +73,10 @@ COPY encrypted-dns.sh /etc/service/encrypted-dns/run
 
 COPY watchdog.sh /etc/service/watchdog/run
 
+COPY redis.conf /etc/redis/
+
 VOLUME ["/opt/encrypted-dns/etc/keys"]
+VOLUME ["/var/lib/redis"]
 
 EXPOSE 443/udp 443/tcp 9100/tcp
 
