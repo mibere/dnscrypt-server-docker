@@ -14,10 +14,16 @@ msg_cache_size=$((availableMemory / 4))
 rr_cache_size=$((availableMemory / 3))
 
 nproc=$(nproc)
-if [ "$nproc" -gt 1 ]; then
-    threads=$((nproc - 1))
+if [ "$nproc" -ge 4 ]; then
+    threads=$((nproc - 2))
+    slabs=4
+    if [ "$threads" -ge 4 ]; then
+        threads=4 
+        slabs=8
+    fi
 else
-    threads=1
+    echo "Not enough processing units" >&2
+    exit 1
 fi
 
 provider_name=$(cat "$KEYS_DIR/provider_name")
@@ -27,6 +33,7 @@ sed \
     -e "s/@PROVIDER_NAME@/${provider_name}/" \
     -e "s/@RR_CACHE_SIZE@/${rr_cache_size}/" \
     -e "s/@THREADS@/${threads}/" \
+    -e "s/@SLABS@/${slabs}/" \
     -e "s#@ZONES_DIR@#${ZONES_DIR}#" \
     > /opt/unbound/etc/unbound/unbound.conf << EOT
 server:
@@ -78,6 +85,10 @@ server:
   unwanted-reply-threshold: 100000
   module-config: "validator cachedb iterator"
   root-hints: "var/root.hints"
+  msg-cache-slabs: @SLABS@
+  rrset-cache-slabs: @SLABS@
+  infra-cache-slabs: @SLABS@
+  key-cache-slabs: @SLABS@
 
   local-zone: "1." static
   local-zone: "10.in-addr.arpa." static
