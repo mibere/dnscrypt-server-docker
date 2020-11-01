@@ -3,7 +3,7 @@
 KEYS_DIR="/opt/encrypted-dns/etc/keys"
 ZONES_DIR="/opt/unbound/etc/unbound/zones"
 
-reserved=268435456
+reserved=536870912
 availableMemory=$((1024 * $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g')))
 if [ $availableMemory -le $((reserved * 2)) ]; then
     echo "Not enough memory" >&2
