@@ -3,7 +3,7 @@
 KEYS_DIR="/opt/encrypted-dns/etc/keys"
 ZONES_DIR="/opt/unbound/etc/unbound/zones"
 
-reserved=536870912
+reserved=1073741824
 availableMemory=$((1024 * $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g')))
 if [ $availableMemory -le $((reserved * 2)) ]; then
     echo "Not enough memory" >&2
@@ -149,7 +149,7 @@ cachedb:
   backend: "redis"
   redis-server-host: 127.0.0.1
   redis-server-port: 6379
-  redis-expire-records: yes
+  redis-expire-records: no
   secret-seed: "Unbound"
 
 remote-control:
