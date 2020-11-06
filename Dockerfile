@@ -78,7 +78,7 @@ COPY redis.conf /etc/redis/
 VOLUME ["/opt/encrypted-dns/etc/keys"]
 VOLUME ["/var/lib/redis"]
 
-EXPOSE 443/udp 443/tcp 9100/tcp
+EXPOSE 443/udp 443/tcp
 
 CMD ["/entrypoint.sh", "start"]
 
