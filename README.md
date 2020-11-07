@@ -1,1 +1,1 @@
-Fork of [DNSCrypt/dnscrypt-server-docker](https://github.com/DNSCrypt/dnscrypt-server-docker) with modified configuration
+Fork of [DNSCrypt/dnscrypt-server-docker](https://github.com/DNSCrypt/dnscrypt-server-docker) with Redis, modified configuration and increased system requirements (4 or more processing units, 1 or more GB RAM)
