@@ -148,7 +148,7 @@ server:
 cachedb:
   backend: "redis"
   redis-server-host: 127.0.0.1
-  redis-server-port: 8845
+  redis-server-port: 5769
   redis-expire-records: no
   secret-seed: "Unbound"
 
