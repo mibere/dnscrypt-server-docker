@@ -6,10 +6,11 @@ ENV SERIAL 1
 
 ENV CFLAGS=-Ofast
 ENV BUILD_DEPS   make build-essential git libevent-dev libexpat1-dev autoconf file libssl-dev byacc libhiredis-dev
-ENV RUNTIME_DEPS bash util-linux coreutils findutils grep libssl1.1 ldnsutils libevent-2.1 expat ca-certificates runit runit-helper nano redis-server cron curl dialog whiptail readline-common
+ENV RUNTIME_DEPS bash util-linux coreutils findutils grep runit runit-helper cron libssl1.1 ca-certificates curl dialog whiptail readline-common ldnsutils libevent-2.1 expat nano redis-server
 
-RUN apt-get update; apt-get -qy dist-upgrade; apt-get -qy clean && \
+RUN apt-get update && apt-get -qy dist-upgrade && \
     apt-get install -qy --no-install-recommends $RUNTIME_DEPS && \
+    apt-get -qy clean && \
     rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
 
 RUN update-ca-certificates 2> /dev/null || true
@@ -19,7 +20,7 @@ ENV UNBOUND_GIT_REVISION release-1.12.0
 
 WORKDIR /tmp
 
-RUN apt-get update; apt-get install -qy --no-install-recommends $BUILD_DEPS && \
+RUN apt-get update && apt-get install -qy --no-install-recommends $BUILD_DEPS && \
     git clone --depth=1000 "$UNBOUND_GIT_URL" && \
     cd unbound && \
     git checkout "$UNBOUND_GIT_REVISION" && \
@@ -29,7 +30,7 @@ RUN apt-get update; apt-get install -qy --no-install-recommends $BUILD_DEPS && \
     --with-username=_unbound --with-libevent --with-libhiredis --enable-cachedb && \
     make -j"$(getconf _NPROCESSORS_ONLN)" install && \
     mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/unbound.conf.example && \
-    apt-get -qy purge $BUILD_DEPS && apt-get -qy autoremove && \
+    apt-get -qy purge $BUILD_DEPS && apt-get -qy autoremove --purge && apt-get -qy clean && \
     rm -fr /opt/unbound/share/man && \
     rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
 
