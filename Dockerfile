@@ -44,7 +44,7 @@ RUN apt-get update && apt-get install -qy --no-install-recommends $BUILD_DEPS &&
     mkdir -p /opt/encrypted-dns/sbin && \
     mv ~/.cargo/bin/encrypted-dns /opt/encrypted-dns/sbin/ && \
     strip --strip-all /opt/encrypted-dns/sbin/encrypted-dns && \
-    apt-get -qy purge $BUILD_DEPS && apt-get -qy autoremove && \
+    apt-get -qy purge $BUILD_DEPS && apt-get -qy autoremove --purge && apt-get -qy clean && \
     rm -fr ~/.cargo ~/.rustup && \
     rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
 
@@ -64,16 +64,11 @@ RUN mkdir -p \
 
 COPY encrypted-dns.toml.in /opt/encrypted-dns/etc/
 COPY undelegated.txt /opt/encrypted-dns/etc/
-
 COPY entrypoint.sh /
-
 COPY unbound.sh /etc/service/unbound/run
 COPY unbound-check.sh /etc/service/unbound/check
-
 COPY encrypted-dns.sh /etc/service/encrypted-dns/run
-
 COPY watchdog.sh /etc/service/watchdog/run
-
 COPY redis.conf /etc/redis/
 
 VOLUME ["/opt/encrypted-dns/etc/keys"]
