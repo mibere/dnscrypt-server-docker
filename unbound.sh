@@ -78,9 +78,9 @@ server:
   aggressive-nsec: yes
   cache-max-negative-ttl: 1800
   extended-statistics: yes
-  incoming-num-tcp: 20
-  outgoing-num-tcp: 20
-  infra-cache-numhosts: 50000
+  incoming-num-tcp: 25
+  outgoing-num-tcp: 25
+  infra-cache-numhosts: 100000
   key-cache-size: 64m
   unwanted-reply-threshold: 100000
   module-config: "validator cachedb iterator"
