@@ -89,6 +89,10 @@ server:
   rrset-cache-slabs: @SLABS@
   infra-cache-slabs: @SLABS@
   key-cache-slabs: @SLABS@
+  log-local-actions: no
+  log-replies: no
+  log-servfail: no
+  val-clean-additional: yes
 
   local-zone: "1." static
   local-zone: "10.in-addr.arpa." static
@@ -183,4 +187,4 @@ mkdir -p /var/lib/redis &&
     chown -R redis:redis /var/lib/redis &&
     service redis-server start
 
-exec /opt/unbound/sbin/unbound
+exec /opt/unbound/sbin/unbound -c /opt/unbound/etc/unbound/unbound.conf
