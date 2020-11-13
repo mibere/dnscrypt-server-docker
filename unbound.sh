@@ -16,11 +16,17 @@ rr_cache_size=$((availableMemory / 3))
 nproc=$(nproc)
 if [ "$nproc" -ge 4 ]; then
     threads=$((nproc - 2))
-    slabs=4
-    if [ "$threads" -ge 4 ]; then
-        threads=4 
-        slabs=8
-    fi
+    export threads
+
+    # Calculate base 2 log of the number of threads
+    threads_log=$(perl -e 'printf "%5.5f\n", log($ENV{threads})/log(2);')
+
+    # Round the logarithm to an integer
+    rounded_threads_log="$(printf '%.*f\n' 0 "$threads_log")"
+
+    # Set *-slabs to a power of 2 close to the num-threads value.
+    # This reduces lock contention.
+    slabs=$(( 2 ** rounded_threads_log ))
 else
     echo "Not enough processing units" >&2
     exit 1
