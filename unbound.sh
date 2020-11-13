@@ -15,6 +15,7 @@ rr_cache_size=$((availableMemory / 3))
 
 nproc=$(nproc)
 if [ "$nproc" -ge 4 ]; then
+    # reserve 2 threads for host / operating system, Docker, encrypted-dns, Redis
     threads=$((nproc - 2))
     export threads
 
@@ -24,9 +25,15 @@ if [ "$nproc" -ge 4 ]; then
     # Round the logarithm to an integer
     rounded_threads_log="$(printf '%.*f\n' 0 "$threads_log")"
 
-    # Set *-slabs to a power of 2 close to the num-threads value.
-    # This reduces lock contention.
-    slabs=$(( 2 ** rounded_threads_log ))
+    # Set *-slabs to a power of 2 close to the num-threads value 
+    slabs=$((2 ** rounded_threads_log))
+
+    # slabs must be at least 4
+    if [ "$slabs" -lt 4 ]; then slabs=4; fi
+
+    # slabs must not be smaller than threads
+    # (every thread should get a slab, without waiting for a free one)
+    if [ "$slabs" -lt "$threads" ]; then slabs=$((slabs * 2)); fi
 else
     echo "Not enough processing units" >&2
     exit 1
