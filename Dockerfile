@@ -6,7 +6,7 @@ ENV SERIAL 1
 
 ENV CFLAGS=-Ofast
 ENV BUILD_DEPS   make build-essential git libevent-dev libexpat1-dev autoconf file libssl-dev byacc libhiredis-dev
-ENV RUNTIME_DEPS bash util-linux coreutils findutils grep runit runit-helper cron libssl1.1 ca-certificates curl dialog whiptail readline-common ldnsutils libevent-2.1 expat nano redis-server
+ENV RUNTIME_DEPS bash util-linux coreutils findutils grep runit runit-helper cron logrotate libssl1.1 ca-certificates curl dialog whiptail readline-common ldnsutils libevent-2.1 expat nano redis-server
 
 RUN apt-get update && apt-get -qy dist-upgrade && \
     apt-get install -qy --no-install-recommends $RUNTIME_DEPS && \
