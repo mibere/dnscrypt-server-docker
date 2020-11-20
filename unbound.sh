@@ -159,6 +159,9 @@ server:
   local-zone: "zghjccbob3n0." static
   local-zone: "@PROVIDER_NAME@." refuse
 
+  # https://support.mozilla.org/en-US/kb/canary-domain-use-application-dnsnet
+  local-zone: "use-application-dns.net." always_nxdomain
+
   include: "@ZONES_DIR@/*.conf"
 
 cachedb:
