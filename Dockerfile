@@ -3,14 +3,18 @@ LABEL maintainer="dnscrypt.one / mibere"
 LABEL origin="Frank Denis"
 SHELL ["/bin/sh", "-x", "-c"]
 
-ENV RUNTIME_DEPS="bash util-linux coreutils tzdata findutils grep runit runit-helper cron logrotate libssl1.1 ca-certificates curl ldnsutils libevent-2.1 expat nano redis-server"
-ENV BUILD_DEPS="make build-essential git libevent-dev libexpat1-dev autoconf file libssl-dev byacc libhiredis-dev"
-ENV TZ="UTC"
+ARG RUNTIME_DEPS="bash util-linux coreutils tzdata findutils grep runit runit-helper cron logrotate libssl1.1 ca-certificates curl ldnsutils libevent-2.1 expat nano redis-server"
+ARG BUILD_DEPS="make build-essential git libevent-dev libexpat1-dev autoconf file libssl-dev byacc libhiredis-dev"
 
-ARG CFLAGS="-Ofast"
+ARG CFLAGS="-O2 -flto"
 # Get rid of the warning "debconf: falling back to frontend" during build time:
 ARG DEBIAN_FRONTEND="noninteractive"
 
+# Timezone
+ENV TZ="Etc/UTC"
+
+# First install 'apt-utils' to get rid of the warning "debconf: delaying
+# package configuration, since apt-utils is not installed" during build time 
 RUN apt-get update && \
     apt-get install -qy --no-install-recommends apt-utils && \
     apt-get -qy dist-upgrade && \
@@ -36,7 +40,7 @@ RUN apt-get update && apt-get install -qy --no-install-recommends $BUILD_DEPS &&
     cd unbound && \
     git checkout "$UNBOUND_GIT_REVISION" && \
     groupadd _unbound && \
-    useradd -g _unbound -s /etc -d /dev/null _unbound && \
+    useradd -g _unbound -s /dev/null -d /dev/null _unbound && \
     ./configure --prefix=/opt/unbound --with-pthreads \
     --with-username=_unbound --with-libevent --with-libhiredis --enable-cachedb && \
     make -j"$(getconf _NPROCESSORS_ONLN)" install && \
@@ -61,7 +65,7 @@ RUN apt-get update && apt-get install -qy --no-install-recommends $BUILD_DEPS &&
 
 RUN groupadd _encrypted-dns && \
     mkdir -p /opt/encrypted-dns/empty && \
-    useradd -g _encrypted-dns -s /etc -d /opt/encrypted-dns/empty _encrypted-dns && \
+    useradd -g _encrypted-dns -s /dev/null -d /opt/encrypted-dns/empty _encrypted-dns && \
     mkdir -m 700 -p /opt/encrypted-dns/etc/keys && \
     mkdir -m 700 -p /opt/encrypted-dns/etc/lists && \
     chown _encrypted-dns:_encrypted-dns /opt/encrypted-dns/etc/keys && \
