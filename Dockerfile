@@ -40,7 +40,7 @@ RUN apt-get update && apt-get install -qy --no-install-recommends $BUILD_DEPS &&
     cd unbound && \
     git checkout "$UNBOUND_GIT_REVISION" && \
     groupadd _unbound && \
-    useradd -g _unbound -s /dev/null -d /dev/null _unbound && \
+    useradd -g _unbound -s /usr/sbin/nologin -d /dev/null _unbound && \
     ./configure --prefix=/opt/unbound --with-pthreads \
     --with-username=_unbound --with-libevent --with-libhiredis --enable-cachedb && \
     make -j"$(getconf _NPROCESSORS_ONLN)" install && \
@@ -65,7 +65,7 @@ RUN apt-get update && apt-get install -qy --no-install-recommends $BUILD_DEPS &&
 
 RUN groupadd _encrypted-dns && \
     mkdir -p /opt/encrypted-dns/empty && \
-    useradd -g _encrypted-dns -s /dev/null -d /opt/encrypted-dns/empty _encrypted-dns && \
+    useradd -g _encrypted-dns -s /usr/sbin/nologin -d /opt/encrypted-dns/empty _encrypted-dns && \
     mkdir -m 700 -p /opt/encrypted-dns/etc/keys && \
     mkdir -m 700 -p /opt/encrypted-dns/etc/lists && \
     chown _encrypted-dns:_encrypted-dns /opt/encrypted-dns/etc/keys && \
