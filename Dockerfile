@@ -3,12 +3,12 @@ LABEL maintainer="dnscrypt.one / mibere"
 LABEL origin="Frank Denis"
 SHELL ["/bin/sh", "-x", "-c"]
 
-ARG CFLAGS=-Ofast
-ARG BUILD_DEPS=make build-essential git libevent-dev libexpat1-dev autoconf file libssl-dev byacc libhiredis-dev
-ARG RUNTIME_DEPS=bash util-linux coreutils findutils grep runit runit-helper cron logrotate libssl1.1 ca-certificates curl ldnsutils libevent-2.1 expat nano redis-server
+ENV RUNTIME_DEPS="bash util-linux coreutils findutils grep runit runit-helper cron logrotate libssl1.1 ca-certificates curl ldnsutils libevent-2.1 expat nano redis-server"
+ENV BUILD_DEPS="make build-essential git libevent-dev libexpat1-dev autoconf file libssl-dev byacc libhiredis-dev"
 
-# Get rid of the warning "debconf: falling back to frontend" during build time
-ARG DEBIAN_FRONTEND=noninteractive
+ARG CFLAGS="-Ofast"
+# Get rid of the warning "debconf: falling back to frontend" during build time:
+ARG DEBIAN_FRONTEND="noninteractive"
 
 RUN apt-get update && \
     apt-get install -qy --no-install-recommends apt-utils && \
@@ -19,10 +19,10 @@ RUN apt-get update && \
 
 RUN update-ca-certificates 2> /dev/null || true
 
-ARG UNBOUND_GIT_URL=https://github.com/NLnetLabs/unbound.git
-ARG UNBOUND_GIT_REVISION=release-1.12.0
-
 WORKDIR /tmp
+
+ARG UNBOUND_GIT_URL="https://github.com/NLnetLabs/unbound.git"
+ARG UNBOUND_GIT_REVISION="release-1.12.0"
 
 RUN apt-get update && apt-get install -qy --no-install-recommends $BUILD_DEPS && \
     git clone --depth=1000 "$UNBOUND_GIT_URL" && \
