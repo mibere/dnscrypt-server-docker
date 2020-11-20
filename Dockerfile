@@ -2,21 +2,25 @@ FROM ubuntu:20.04
 LABEL maintainer="dnscrypt.one / mibere"
 LABEL origin="Frank Denis"
 SHELL ["/bin/sh", "-x", "-c"]
-ENV SERIAL 1
 
-ENV CFLAGS=-Ofast
-ENV BUILD_DEPS   make build-essential git libevent-dev libexpat1-dev autoconf file libssl-dev byacc libhiredis-dev
-ENV RUNTIME_DEPS bash util-linux coreutils findutils grep runit runit-helper cron logrotate libssl1.1 ca-certificates curl dialog whiptail readline-common ldnsutils libevent-2.1 expat nano redis-server
+ARG CFLAGS=-Ofast
+ARG BUILD_DEPS=make build-essential git libevent-dev libexpat1-dev autoconf file libssl-dev byacc libhiredis-dev
+ARG RUNTIME_DEPS=bash util-linux coreutils findutils grep runit runit-helper cron logrotate libssl1.1 ca-certificates curl ldnsutils libevent-2.1 expat nano redis-server
 
-RUN apt-get update && apt-get -qy dist-upgrade && \
+# Get rid of the warning "debconf: falling back to frontend" during build time
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -qy --no-install-recommends apt-utils && \
+    apt-get -qy dist-upgrade && \
     apt-get install -qy --no-install-recommends $RUNTIME_DEPS && \
     apt-get -qy clean && \
     rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
 
 RUN update-ca-certificates 2> /dev/null || true
 
-ENV UNBOUND_GIT_URL https://github.com/NLnetLabs/unbound.git
-ENV UNBOUND_GIT_REVISION release-1.12.0
+ARG UNBOUND_GIT_URL=https://github.com/NLnetLabs/unbound.git
+ARG UNBOUND_GIT_REVISION=release-1.12.0
 
 WORKDIR /tmp
 
@@ -34,7 +38,7 @@ RUN apt-get update && apt-get install -qy --no-install-recommends $BUILD_DEPS &&
     rm -fr /opt/unbound/share/man && \
     rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
 
-ENV RUSTFLAGS "-C link-arg=-s"
+ARG RUSTFLAGS="-C link-arg=-s"
 
 RUN apt-get update && apt-get install -qy --no-install-recommends $BUILD_DEPS && \
     curl -sSf https://sh.rustup.rs | bash -s -- -y --default-toolchain stable && \
