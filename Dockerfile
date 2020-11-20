@@ -3,8 +3,9 @@ LABEL maintainer="dnscrypt.one / mibere"
 LABEL origin="Frank Denis"
 SHELL ["/bin/sh", "-x", "-c"]
 
-ENV RUNTIME_DEPS="bash util-linux coreutils findutils grep runit runit-helper cron logrotate libssl1.1 ca-certificates curl ldnsutils libevent-2.1 expat nano redis-server"
+ENV RUNTIME_DEPS="bash util-linux coreutils tzdata findutils grep runit runit-helper cron logrotate libssl1.1 ca-certificates curl ldnsutils libevent-2.1 expat nano redis-server"
 ENV BUILD_DEPS="make build-essential git libevent-dev libexpat1-dev autoconf file libssl-dev byacc libhiredis-dev"
+ENV TZ="UTC"
 
 ARG CFLAGS="-Ofast"
 # Get rid of the warning "debconf: falling back to frontend" during build time:
@@ -16,6 +17,12 @@ RUN apt-get update && \
     apt-get install -qy --no-install-recommends $RUNTIME_DEPS && \
     apt-get -qy clean && \
     rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
+
+# Set timezone
+RUN echo $TZ > /etc/timezone && \
+    rm /etc/localtime && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
 
 RUN update-ca-certificates 2> /dev/null || true
 
