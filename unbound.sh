@@ -3,16 +3,14 @@
 KEYS_DIR="/opt/encrypted-dns/etc/keys"
 ZONES_DIR="/opt/unbound/etc/unbound/zones"
 
-minAvailableMemInMB=3072
 availableMemInMB=$(( $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g' ) / 1024 ))
-if [ $availableMemInMB -le $minAvailableMemInMB ]; then
+if [ $availableMemInMB -le 3072 ]; then
     echo "Not enough available memory" >&2
     exit 1
 fi
-# Limit rrset-cache-size to 1024 MB and msg-cache-size to 682 MB
-if [ "$availableMemInMB" -gt 2048 ]; then availableMemInMB=2048; fi
-rr_cache_size=$((availableMemInMB / 2))
-msg_cache_size=$((availableMemInMB / 3))
+# msg_cache_size = rr_cache_size / 1.2
+rr_cache_size=1024
+msg_cache_size=853
 
 nproc=$(nproc)
 if [ "$nproc" -ge 4 ]; then
