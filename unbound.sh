@@ -104,7 +104,12 @@ server:
   log-local-actions: no
   log-replies: no
   log-servfail: no
+  log-time-ascii: yes
   val-clean-additional: yes
+  val-log-level: 0
+
+  # https://blog.cloudflare.com/rfc8482-saying-goodbye-to-any/
+  deny-any: yes
 
   local-zone: "1." static
   local-zone: "10.in-addr.arpa." static
