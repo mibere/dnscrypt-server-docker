@@ -3,15 +3,16 @@
 KEYS_DIR="/opt/encrypted-dns/etc/keys"
 ZONES_DIR="/opt/unbound/etc/unbound/zones"
 
-reserved=1073741824
-availableMemory=$((1024 * $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g')))
-if [ $availableMemory -le $((reserved * 2)) ]; then
-    echo "Not enough memory" >&2
+minAvailableMemInMB=3072
+availableMemInMB=$(( $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g' ) / 1024 ))
+if [ $availableMemInMB -le $minAvailableMemInMB ]; then
+    echo "Not enough available memory" >&2
     exit 1
 fi
-availableMemory=$((availableMemory - reserved))
-msg_cache_size=$((availableMemory / 4))
-rr_cache_size=$((availableMemory / 3))
+# Limit rrset-cache-size to 1024 MB and msg-cache-size to 682 MB
+if [ "$availableMemInMB" -gt 2048 ]; then availableMemInMB=2048; fi
+rr_cache_size=$((availableMemInMB / 2))
+msg_cache_size=$((availableMemInMB / 3))
 
 nproc=$(nproc)
 if [ "$nproc" -ge 4 ]; then
@@ -42,9 +43,9 @@ fi
 provider_name=$(cat "$KEYS_DIR/provider_name")
 
 sed \
-    -e "s/@MSG_CACHE_SIZE@/${msg_cache_size}/" \
     -e "s/@PROVIDER_NAME@/${provider_name}/" \
     -e "s/@RR_CACHE_SIZE@/${rr_cache_size}/" \
+    -e "s/@MSG_CACHE_SIZE@/${msg_cache_size}/" \
     -e "s/@THREADS@/${threads}/" \
     -e "s/@SLABS@/${slabs}/" \
     -e "s#@ZONES_DIR@#${ZONES_DIR}#" \
@@ -80,8 +81,8 @@ server:
   auto-trust-anchor-file: "var/root.key"
   num-queries-per-thread: 4096
   outgoing-range: 8192
-  msg-cache-size: @MSG_CACHE_SIZE@
-  rrset-cache-size: @RR_CACHE_SIZE@
+  msg-cache-size: @MSG_CACHE_SIZE@m
+  rrset-cache-size: @RR_CACHE_SIZE@m
   neg-cache-size: 16M
   serve-expired: yes
   serve-expired-ttl: 21600
