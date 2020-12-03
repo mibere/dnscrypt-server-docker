@@ -107,6 +107,10 @@ server:
   log-time-ascii: yes
   val-clean-additional: yes
   val-log-level: 0
+  so-rcvbuf: 2m
+  so-sndbuf: 2m
+  use-syslog: no
+  logfile: "unbound.log"
 
   # https://blog.cloudflare.com/rfc8482-saying-goodbye-to-any/
   deny-any: yes
