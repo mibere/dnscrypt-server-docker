@@ -3,7 +3,7 @@ LABEL maintainer="dnscrypt.one / mibere"
 LABEL origin="Frank Denis"
 SHELL ["/bin/sh", "-x", "-c"]
 
-ARG RUNTIME_DEPS="bash util-linux coreutils tzdata findutils grep rsyslog runit runit-helper cron logrotate libssl1.1 ca-certificates curl ldnsutils libevent-2.1 expat nano redis-server"
+ARG RUNTIME_DEPS="bash util-linux coreutils tzdata findutils grep runit runit-helper cron logrotate libssl1.1 ca-certificates curl ldnsutils libevent-2.1 expat nano redis-server"
 ARG BUILD_DEPS="make build-essential git libevent-dev libexpat1-dev autoconf file libssl-dev byacc libhiredis-dev"
 
 ARG CFLAGS="-O2"
