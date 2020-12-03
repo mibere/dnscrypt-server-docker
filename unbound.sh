@@ -209,6 +209,7 @@ mkdir -p /opt/unbound/etc/unbound/zones
 
 mkdir -p /var/lib/redis &&
     chown -R redis:redis /var/lib/redis &&
-    service redis-server start
+    service redis-server start &&
+    sleep 3s && while [ -z "$PONG" ]; do sleep 2s; PONG=`redis-cli -p 5769 ping | grep -i PONG`; done && PONG=""
 
 exec /opt/unbound/sbin/unbound -c /opt/unbound/etc/unbound/unbound.conf
