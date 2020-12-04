@@ -61,6 +61,7 @@ RUN apt-get update && apt-get install -qy --no-install-recommends $BUILD_DEPS &&
     strip --strip-all /opt/encrypted-dns/sbin/encrypted-dns && \
     apt-get -qy purge $BUILD_DEPS && apt-get -qy autoremove --purge && apt-get -qy clean && \
     rm -fr ~/.cargo ~/.rustup && \
+    sed -i '/^source "\$HOME\/\.cargo\/env"$/d' ~/.profile && \
     rm -fr /tmp/* /var/tmp/* /var/cache/apt/* /var/lib/apt/lists/* /var/log/apt/* /var/log/*.log
 
 RUN groupadd _encrypted-dns && \
