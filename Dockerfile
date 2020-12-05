@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:20.10
 LABEL maintainer="dnscrypt.one / mibere"
 LABEL origin="Frank Denis"
 SHELL ["/bin/sh", "-x", "-c"]
