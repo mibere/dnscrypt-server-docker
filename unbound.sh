@@ -111,6 +111,7 @@ server:
   so-sndbuf: 2m
   use-syslog: no
   logfile: "var/unbound.log"
+  udp-connect: no
 
   # https://blog.cloudflare.com/rfc8482-saying-goodbye-to-any/
   deny-any: yes
