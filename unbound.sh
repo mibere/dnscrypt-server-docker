@@ -13,9 +13,9 @@ rr_cache_size=1024
 msg_cache_size=853
 
 nproc=$(nproc)
-if [ "$nproc" -ge 4 ]; then
-    # reserve 2 threads for host / operating system, Docker, encrypted-dns, Redis
-    threads=$((nproc - 2))
+if [ "$nproc" -ge 6 ]; then
+    # reserve 3 units (host / operating system, Docker, encrypted-dns, Redis)
+    threads=$((nproc - 3))
     export threads
 
     # Calculate base 2 log of the number of threads
@@ -27,10 +27,10 @@ if [ "$nproc" -ge 4 ]; then
     # Set *-slabs to a power of 2 close to the num-threads value 
     slabs=$((2 ** rounded_threads_log))
 
-    # slabs must be at least 4
+    # *-slabs must be at least 4
     if [ "$slabs" -lt 4 ]; then slabs=4; fi
 
-    # slabs must not be smaller than threads
+    # *-slabs must not be smaller than threads
     # (every thread should get a slab, without waiting for a free one)
     if [ "$slabs" -lt "$threads" ]; then slabs=$((slabs * 2)); fi
 else
