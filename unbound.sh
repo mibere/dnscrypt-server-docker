@@ -4,35 +4,50 @@ KEYS_DIR="/opt/encrypted-dns/etc/keys"
 ZONES_DIR="/opt/unbound/etc/unbound/zones"
 
 availableMemInMB=$(( $( (grep -F MemAvailable /proc/meminfo || grep -F MemTotal /proc/meminfo) | sed 's/[^0-9]//g' ) / 1024 ))
-if [ $availableMemInMB -le 3072 ]; then
+if [ $availableMemInMB -lt 3000 ]; then
     echo "Not enough available memory" >&2
     exit 1
 fi
 # msg_cache_size = rr_cache_size / 1.2
-rr_cache_size=1024
-msg_cache_size=853
+rr_cache_size=768
+msg_cache_size=640
 
 nproc=$(nproc)
-if [ "$nproc" -ge 6 ]; then
-    # reserve 3 units (host / operating system, Docker, encrypted-dns, Redis)
-    threads=$((nproc - 3))
-    export threads
+if [ "$nproc" -ge 4 ]; then
+    # reserve 2 units (host / operating system, Docker, encrypted-dns)
+    punits=$((nproc - 2))
 
-    # Calculate base 2 log of the number of threads
-    threads_log=$(perl -e 'printf "%5.5f\n", log($ENV{threads})/log(2);')
+    # don't use more than 8
+    if [ "$punits" -gt 8 ]; then punits=8; fi
 
-    # Round the logarithm to an integer
-    rounded_threads_log="$(printf '%.*f\n' 0 "$threads_log")"
+    # threads used by Unbound
+    if [ "$punits" -ge 5 ]; then
+        unboundthreads=$((punits - 2))
+    else
+        unboundthreads=$((punits - 1))
+    fi
+    export unboundthreads
 
-    # Set *-slabs to a power of 2 close to the num-threads value 
-    slabs=$((2 ** rounded_threads_log))
+    # calculate base 2 log of the number of unboundthreads
+    unboundthreads_log=$(perl -e 'printf "%5.5f\n", log($ENV{unboundthreads})/log(2);')
+
+    # round the logarithm to an integer
+    rounded_unboundthreads_log="$(printf '%.*f\n' 0 "$unboundthreads_log")"
+
+    # set *-slabs to a power of 2 close to the num-threads value 
+    slabs=$((2 ** rounded_unboundthreads_log))
 
     # *-slabs must be at least 4
     if [ "$slabs" -lt 4 ]; then slabs=4; fi
 
-    # *-slabs must not be smaller than threads
+    # *-slabs must not be smaller than unboundthreads
     # (every thread should get a slab, without waiting for a free one)
-    if [ "$slabs" -lt "$threads" ]; then slabs=$((slabs * 2)); fi
+    if [ "$slabs" -lt "$unboundthreads" ]; then slabs=$((slabs * 2)); fi
+
+    # threads used by Redis, default 1
+    if [ "$punits" -ge 6 ]; then
+        sed -i 's/^io-threads 1$/io-threads 2/g' /etc/redis/redis.conf
+    fi
 else
     echo "Not enough processing units" >&2
     exit 1
@@ -44,7 +59,7 @@ sed \
     -e "s/@PROVIDER_NAME@/${provider_name}/" \
     -e "s/@RR_CACHE_SIZE@/${rr_cache_size}/" \
     -e "s/@MSG_CACHE_SIZE@/${msg_cache_size}/" \
-    -e "s/@THREADS@/${threads}/" \
+    -e "s/@THREADS@/${unboundthreads}/" \
     -e "s/@SLABS@/${slabs}/" \
     -e "s#@ZONES_DIR@#${ZONES_DIR}#" \
     > /opt/unbound/etc/unbound/unbound.conf << EOT
