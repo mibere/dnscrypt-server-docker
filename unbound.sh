@@ -12,8 +12,14 @@ function waitForRedis {
 function restartRedis {
     waitForRedis
     service redis-server stop
-    sleep 1s
+    sleep 2s
     service redis-server start
+    waitForRedis
+}
+
+function startRedis {
+    service redis-server start
+    waitForRedis
 }
 
 KEYS_DIR="/opt/encrypted-dns/etc/keys"
@@ -233,12 +239,12 @@ if [ ! -f /opt/unbound/etc/unbound/unbound_control.pem ]; then
 fi
 
 mkdir -p /opt/unbound/etc/unbound/zones
+mkdir -p /var/lib/redis && chown -R redis:redis /var/lib/redis
 
 # threads used by Redis, default 1
 if [ "$punits" -ge 6 ]; then
     sed -i 's/^io-threads 1$/io-threads 2/g' /etc/redis/redis.conf
-    restartRedis
 fi
-waitForRedis
+startRedis
 
 exec /opt/unbound/sbin/unbound -c /opt/unbound/etc/unbound/unbound.conf
