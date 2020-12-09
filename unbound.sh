@@ -1,5 +1,21 @@
 #! /usr/bin/env bash
 
+function waitForRedis {
+    sleep 3s
+    while [ -z "$PONG" ]; do
+        sleep 2s
+        PONG=$(redis-cli -p 5769 ping | grep -i PONG)
+    done
+    PONG=""
+}
+
+function restartRedis {
+    waitForRedis
+    service redis-server stop
+    sleep 1s
+    service redis-server start
+}
+
 KEYS_DIR="/opt/encrypted-dns/etc/keys"
 ZONES_DIR="/opt/unbound/etc/unbound/zones"
 
@@ -43,11 +59,6 @@ if [ "$nproc" -ge 4 ]; then
     # *-slabs must not be smaller than unboundthreads
     # (every thread should get a slab, without waiting for a free one)
     if [ "$slabs" -lt "$unboundthreads" ]; then slabs=$((slabs * 2)); fi
-
-    # threads used by Redis, default 1
-    if [ "$punits" -ge 6 ]; then
-        sed -i 's/^io-threads 1$/io-threads 2/g' /etc/redis/redis.conf
-    fi
 else
     echo "Not enough processing units" >&2
     exit 1
@@ -223,9 +234,11 @@ fi
 
 mkdir -p /opt/unbound/etc/unbound/zones
 
-mkdir -p /var/lib/redis &&
-    chown -R redis:redis /var/lib/redis &&
-    { service redis-server status || service redis-server --full-restart; } &&
-    sleep 3s && while [ -z "$PONG" ]; do sleep 2s; PONG=`redis-cli -p 5769 ping | grep -i PONG`; done && PONG=""
+# threads used by Redis, default 1
+if [ "$punits" -ge 6 ]; then
+    sed -i 's/^io-threads 1$/io-threads 2/g' /etc/redis/redis.conf
+    restartRedis
+fi
+waitForRedis
 
 exec /opt/unbound/sbin/unbound -c /opt/unbound/etc/unbound/unbound.conf
