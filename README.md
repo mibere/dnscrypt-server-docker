@@ -7,7 +7,7 @@ Docker image used by https://dnscrypt.one
 - 4 or more processing units (reported by _nproc_)
 - 3 GB free RAM
 - Debian 10 (Buster)
-- Docker
+- Docker 19.03.13
 
 ###### Preparations
 
