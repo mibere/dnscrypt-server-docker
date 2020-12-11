@@ -34,8 +34,8 @@ net.ipv4.tcp_slow_start_after_idle = 0
 vm.overcommit_memory = 1
 
 # Kernel 4.19+ required
-net.core.default_qdisc=fq
-net.ipv4.tcp_congestion_control=bbr
+net.core.default_qdisc = fq
+net.ipv4.tcp_congestion_control = bbr
 ```
 ```
 sysctl -p
