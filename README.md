@@ -7,7 +7,8 @@ Docker image used by https://dnscrypt.one
 - 4 or more processing units (reported by _nproc_)
 - 3 GB free RAM
 - Debian 10 (Buster)
-- Docker 19.03.13
+- Kernel 4.19+
+- Docker 19.03+ 
 
 ###### Preparations
 
@@ -29,7 +30,12 @@ net.ipv4.tcp_syncookies = 1
 net.ipv4.tcp_max_syn_backlog = 8192
 net.ipv4.tcp_slow_start_after_idle = 0
 
+# Redis, https://redis.io/topics/faq
 vm.overcommit_memory = 1
+
+# Kernel 4.19+ required
+net.core.default_qdisc=fq
+net.ipv4.tcp_congestion_control=bbr
 ```
 ```
 sysctl -p
@@ -43,7 +49,7 @@ root    hard    nofile  75000
 *       hard    nofile  75000
 ```
 
-[Disabled Transparent Huge Pages](https://redis.io/topics/latency), _/lib/systemd/system/redis-dthp.service_
+[Disabled transparent huge pages](https://redis.io/topics/latency), _/lib/systemd/system/redis-dthp.service_
 
 ```
 [Unit]
