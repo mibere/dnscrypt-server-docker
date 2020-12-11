@@ -1,12 +1,18 @@
 #! /usr/bin/env bash
 
 function waitForRedis {
+    maxTries=15
+    try=1
+    alive=""
     sleep 3s
-    while [ -z "$PONG" ]; do
+    while [ $try -le $maxTries ]; do
         sleep 2s
-        PONG=$(redis-cli -p 5769 ping | grep -i PONG)
+        alive=$(redis-cli -p 5769 ping | grep -i PONG)
+        if [ -n "$alive" ]; then return; fi
+        try=$(( try + 1 ))
     done
-    PONG=""
+    echo "Redis is not running" >&2
+    exit 1
 }
 
 function restartRedis {
