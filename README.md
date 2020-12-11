@@ -28,8 +28,8 @@ net.ipv4.tcp_fastopen = 3
 net.ipv4.tcp_syncookies = 1
 net.ipv4.tcp_max_syn_backlog = 8192
 net.ipv4.tcp_slow_start_after_idle = 0
-#net.ipv4.udp_rmem_min = 8192
-#net.ipv4.udp_wmem_min = 8192
+
+vm.overcommit_memory = 1
 ```
 ```
 sysctl -p
