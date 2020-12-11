@@ -144,6 +144,10 @@ server:
   use-syslog: no
   logfile: "var/unbound.log"
   udp-connect: no
+  do-ip4: yes
+  do-ip6: no
+  prefer-ip4: yes
+  prefer-ip6: no
 
   # https://blog.cloudflare.com/rfc8482-saying-goodbye-to-any/
   deny-any: yes
