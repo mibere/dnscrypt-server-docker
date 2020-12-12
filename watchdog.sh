@@ -5,7 +5,7 @@
 
 sleep 180
 
-for service in cron redis-server; do
+for service in redis-server; do
     service "$service" status || service "$service" --full-restart
 done
 
