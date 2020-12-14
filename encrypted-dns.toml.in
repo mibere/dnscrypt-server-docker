@@ -80,7 +80,7 @@ cache_ttl_max = 86400
 
 ## DNS cache: error TTL
 
-cache_ttl_error = 60
+cache_ttl_error = 300
 
 
 ## DNS cache: to avoid bursts of traffic for popular queries when an
