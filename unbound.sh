@@ -91,7 +91,6 @@ server:
   num-threads: @THREADS@
   interface: 127.0.0.1@553
   so-reuseport: yes
-  edns-buffer-size: 1232
   delay-close: 10000
   cache-min-ttl: 900
   cache-max-ttl: 86400
@@ -158,6 +157,14 @@ server:
 
   # https://blog.cloudflare.com/rfc8482-saying-goodbye-to-any/
   deny-any: yes
+
+  # Even if https://dnsflagday.net/2020/ recommends "edns-buffer-size: 1232"
+  # Part 1: https://labs.apnic.net/?p=1380
+  # Part 2: https://labs.apnic.net/?p=1386
+  # Part 3: https://labs.apnic.net/?p=1390
+  edns-buffer-size: 1472
+  tcp-mss: 1200
+  outgoing-tcp-mss: 1200
 
   local-zone: "1." static
   local-zone: "10.in-addr.arpa." static
