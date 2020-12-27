@@ -93,7 +93,7 @@ server:
   so-reuseport: yes
   edns-buffer-size: 1232
   delay-close: 10000
-  cache-min-ttl: 1800
+  cache-min-ttl: 1200
   cache-max-ttl: 86400
   do-daemonize: no
   username: "_unbound"
@@ -121,7 +121,7 @@ server:
   rrset-cache-size: @RR_CACHE_SIZE@m
   neg-cache-size: 16M
   serve-expired: yes
-  serve-expired-ttl: 43200
+  serve-expired-ttl: 28800
   access-control: 0.0.0.0/0 allow
   access-control: ::0/0 allow
   tls-cert-bundle: "/etc/ssl/certs/ca-certificates.crt"
@@ -155,7 +155,7 @@ server:
   prefer-ip4: yes
   prefer-ip6: no
   val-bogus-ttl: 300
-  infra-host-ttl: 1800
+  infra-host-ttl: 1200
 
   # https://blog.cloudflare.com/rfc8482-saying-goodbye-to-any/
   deny-any: yes
