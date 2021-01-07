@@ -155,7 +155,7 @@ server:
   prefer-ip4: yes
   prefer-ip6: no
   val-bogus-ttl: 300
-  infra-host-ttl: 1200
+  infra-host-ttl: 1800
 
   # https://blog.cloudflare.com/rfc8482-saying-goodbye-to-any/
   deny-any: yes
