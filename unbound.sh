@@ -93,7 +93,7 @@ server:
   so-reuseport: yes
   edns-buffer-size: 1232
   delay-close: 10000
-  cache-min-ttl: 1200
+  cache-min-ttl: 1800
   cache-max-ttl: 86400
   do-daemonize: no
   username: "_unbound"
@@ -121,7 +121,7 @@ server:
   rrset-cache-size: @RR_CACHE_SIZE@m
   neg-cache-size: 16M
   serve-expired: yes
-  serve-expired-ttl: 28800
+  serve-expired-ttl: 86400
   access-control: 0.0.0.0/0 allow
   access-control: ::0/0 allow
   tls-cert-bundle: "/etc/ssl/certs/ca-certificates.crt"
@@ -130,7 +130,7 @@ server:
   extended-statistics: yes
   incoming-num-tcp: 25
   outgoing-num-tcp: 25
-  infra-cache-numhosts: 100000
+  infra-cache-numhosts: 200000
   key-cache-size: 64m
   unwanted-reply-threshold: 100000
   module-config: "validator cachedb iterator"
