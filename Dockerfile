@@ -33,7 +33,7 @@ RUN update-ca-certificates 2> /dev/null || true
 WORKDIR /tmp
 
 ARG UNBOUND_GIT_URL="https://github.com/NLnetLabs/unbound.git"
-ARG UNBOUND_GIT_REVISION="release-1.13.0"
+ARG UNBOUND_GIT_REVISION="release-1.13.1"
 
 RUN apt-get update && apt-get install -qy --no-install-recommends $BUILD_DEPS && \
     git clone "$UNBOUND_GIT_URL" && \
