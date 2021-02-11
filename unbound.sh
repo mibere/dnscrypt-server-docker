@@ -242,8 +242,9 @@ mkdir -p /opt/unbound/etc/unbound/dev &&
     cp -a /dev/random /dev/urandom /opt/unbound/etc/unbound/dev/
 
 mkdir -p -m 700 /opt/unbound/etc/unbound/var &&
-    chown _unbound:_unbound /opt/unbound/etc/unbound/var &&
     curl -sSf --connect-timeout 15 --retry 2 --retry-delay 10 --max-time 60 https://www.internic.net/domain/named.root -o /opt/unbound/etc/unbound/var/root.hints &&
+    curl -sSf --connect-timeout 15 --retry 2 --retry-delay 10 --max-time 60 https://www.internic.net/domain/root.zone -o /opt/unbound/etc/unbound/var/root.zone &&
+    chown -R _unbound:_unbound /opt/unbound/etc/unbound/var &&
     /opt/unbound/sbin/unbound-anchor -r /opt/unbound/etc/unbound/var/root.hints -a /opt/unbound/etc/unbound/var/root.key
 
 if [ ! -f /opt/unbound/etc/unbound/unbound_control.pem ]; then
